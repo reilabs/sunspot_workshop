@@ -1,0 +1,6 @@
+[package]
+name = "summation"
+type = "bin"
+authors = [""]
+
+[dependencies]
