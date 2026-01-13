@@ -12,7 +12,7 @@ import * as fs from 'fs';
 async function run() {
   const args = process.argv.slice(2);
   if (args.length < 2) {
-    console.log("Usage: ts-node send-bytes.ts <PROGRAM_ADDRESS> <FILE1> <FILE2> ...");
+    console.log("Usage: tsx transact.ts <PROGRAM_ADDRESS> <FILE1> <FILE2> ...");
     process.exit(1);
   }
 
