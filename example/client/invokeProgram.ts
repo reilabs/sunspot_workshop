@@ -13,8 +13,9 @@ import {
 } from "@solana/spl-token";
 import fs from "fs";
 
-const PROGRAM_ID = new PublicKey("3pf5vcgHWcb38uuuoN3NYYgjjVXb1DZgdzhyyytLdtCr");
-const MINT = new PublicKey("8dADb3kK8it38mQL12NbhuRUmJAQ5eMbxCEhYFGZEyPz");
+// Replace these strings with your own Program ID and Mint
+const PROGRAM_ID = new PublicKey("11111111111111111111111111111111");
+const MINT = new PublicKey("11111111111111111111111111111111");
 
 // === CONNECTION & WALLET ===
 const connection = new Connection("https://api.devnet.solana.com", "confirmed");
