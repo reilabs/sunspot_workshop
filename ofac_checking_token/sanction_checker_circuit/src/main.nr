@@ -1,16 +1,18 @@
+mod passport_validity;
+
 use utils::{constants::DG1_LENGTH};
 use sanctions::{types::{SanctionsOrderedMerkleTreeProof, SanctionsOrderedMerkleTreeProofs}, SanctionsSparseMerkleTrees};
-use commitment_utils::calculate_certificate_registry_leaf;
-use validity_check::{check_integrity_of_sod_within_sod_cert, PassportValidityContents};
+use commitment_utils::calculate_certificate_registry_leaf_v0;
 use commitment_utils::{get_country_from_dg1, compute_merkle_root};
 use expiry_check::check_expiry;
 use rsa_sig_check::verify_signature;
 use tbs_check::verify_rsa_pubkey_in_tbs;
+use passport_validity::{check_integrity_of_sod_within_sod_cert, PassportValidityContents};
 
 
 // This circuit certifies that the provided details are a "real" passport
 // and that the holder is not on the OFAC sanctions list
-fn main(dg1: [u8; DG1_LENGTH], proofs: [SanctionsOrderedMerkleTreeProof; 10], 
+fn main(dg1: [u8; DG1_LENGTH], proofs: [SanctionsOrderedMerkleTreeProof; 10],
     certificate_registry_hash_path: [Field; 16], passport_validity_contents: PassportValidityContents,
     certificate_tags: [Field; 3], certificate_registry_index: Field, current_date: pub u64,
     ) {
@@ -19,7 +21,7 @@ fn main(dg1: [u8; DG1_LENGTH], proofs: [SanctionsOrderedMerkleTreeProof; 10],
 
     // Make sure that the provided csc is in the merkle tree of certificates
     let leaf: Field =
-        calculate_certificate_registry_leaf(certificate_tags, 1, get_country_from_dg1(dg1), passport_validity_contents.csc_pubkey);
+        calculate_certificate_registry_leaf_v0(certificate_tags, 1, get_country_from_dg1(dg1), passport_validity_contents.csc_pubkey);
     let root = compute_merkle_root(
         leaf,
         certificate_registry_index,
@@ -40,7 +42,7 @@ fn main(dg1: [u8; DG1_LENGTH], proofs: [SanctionsOrderedMerkleTreeProof; 10],
         name_and_yob_proofs:  [proofs[7], proofs[8], proofs[9]],
     };
     trees.check_sanctions_exclusion(dg1, smt_proofs, true)
-   
+
 }
 
 // CONSTANTS
@@ -48,6 +50,9 @@ global SIGNED_ATTRIBUTES_MAX_SIZE: u32 = 200;
 global DSC_CERT_MAX_SIZE: u32 = 1300;
 global DSC_SIGNATURE_SIZE: u32 = 256;
 global CSC_PUBKEY_SIZE: u32 = 512;
+// PSS salt length for SHA-256 signatures (matches hash size).
+global PSS_SALT_LEN_SHA256: u32 = 32;
+
 fn check_passport_validity(passport_validity_contents: PassportValidityContents) {
     // Checks that H(SOD) is located correctly within the Signed Attributes certificate.
     check_integrity_of_sod_within_sod_cert(
@@ -68,14 +73,16 @@ fn check_passport_validity(passport_validity_contents: PassportValidityContents)
         passport_validity_contents.dsc_rsa_exponent,
         passport_validity_contents.signed_attributes,
         passport_validity_contents.signed_attributes_size as u32,
+        PSS_SALT_LEN_SHA256,
     ));
 
     // --- DSC certificate signature check ---
-    // The first thing checks that the appropriate substring of the `tbs_certificate` is equivalent to the `dsc_pubkey`
+    // The zkpassport tbs check finds the pubkey offset itself and additionally
+    // verifies that the encoded exponent matches.
     verify_rsa_pubkey_in_tbs(
         passport_validity_contents.dsc_pubkey,
+        passport_validity_contents.dsc_rsa_exponent,
         passport_validity_contents.dsc_cert,
-        passport_validity_contents.dsc_pubkey_offset_in_dsc_cert,
     );
 
     // Check the signature over the DSC
@@ -88,6 +95,6 @@ fn check_passport_validity(passport_validity_contents: PassportValidityContents)
         passport_validity_contents.csc_rsa_exponent,
         passport_validity_contents.dsc_cert, // This is `data_to_sign`, i.e. the message
         passport_validity_contents.dsc_cert_len,
+        0, // pss_salt_len unused for PKCS
     ));
 }
-
