@@ -1,0 +1,22 @@
+{
+  "name": "OFAC checked",
+  "symbol": "OFAC",
+  "description": "Proof-of-non-sanction attestation. Held by wallets that submitted a valid zero-knowledge proof of not appearing on the U.S. Treasury OFAC SDN list. Non-transferable; balance capped at 1 per wallet. Minted only by the on-chain verifier program from the Reilabs sunspot workshop.",
+  "image": "https://raw.githubusercontent.com/reilabs/sunspot_workshop/main/ofac_checking_token/token_metadata/ofac-checked.png",
+  "external_url": "https://github.com/reilabs/sunspot_workshop",
+  "attributes": [
+    { "trait_type": "Attestation", "value": "OFAC SDN non-membership" },
+    { "trait_type": "Prover", "value": "Sunspot verifier on Solana" },
+    { "trait_type": "Transferable", "value": "false" },
+    { "trait_type": "Network", "value": "Solana devnet" }
+  ],
+  "properties": {
+    "category": "image",
+    "files": [
+      {
+        "uri": "https://raw.githubusercontent.com/reilabs/sunspot_workshop/main/ofac_checking_token/token_metadata/ofac-checked.png",
+        "type": "image/png"
+      }
+    ]
+  }
+}
