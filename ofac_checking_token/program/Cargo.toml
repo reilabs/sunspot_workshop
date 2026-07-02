@@ -9,7 +9,7 @@ resolver="2"
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
-gnark-verifier-solana = "1.0.2"
+gnark-verifier-solana = "2.0.0"
 solana-program = "3.0.0"
 spl-token = { version = "9.0.0", default-features = false, features = ["no-entrypoint"] }
 

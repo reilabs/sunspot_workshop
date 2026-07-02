@@ -831,9 +831,9 @@ dependencies = [
 
 [[package]]
 name = "gnark-verifier-solana"
-version = "1.0.2"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8341ed8876e30de06cddf612d95c223be64feaa4d05a6fdd63d4c0d3703d2b56"
+checksum = "c6d5d1de7c95f5c1ade1d68bce821c757c50aba88bf7bfd2d00f9fe14d8bdb19"
 dependencies = [
  "ark-bn254 0.5.0",
  "ark-ec 0.5.0",

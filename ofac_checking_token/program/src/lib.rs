@@ -1,5 +1,5 @@
 mod vk;
-use gnark_verifier_solana::{proof::GnarkProof, verifier::GnarkVerifier, witness::GnarkWitness};
+use gnark_verifier_solana::{GnarkProof, GnarkVerifier, GnarkWitness};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::{entrypoint, ProgramResult},
@@ -41,10 +41,11 @@ pub fn process_instruction(
 
     // Construct the proof and witness and verify
     const NR_INPUTS: usize = vk::VK.nr_pubinputs;
+    const N_COMMITMTENTS: usize = vk::VK.commitment_keys.len();
     let proof_len = instruction_data.len() - (12 + NR_INPUTS * 32);
     let proof_bytes = &instruction_data[..proof_len];
 
-    let proof = GnarkProof::from_bytes(proof_bytes).map_err(|e| {
+    let proof: GnarkProof<N_COMMITMTENTS> = GnarkProof::from_bytes(proof_bytes).map_err(|e| {
         msg!("Gnark error: {:?}", e);
         ProgramError::Custom(u32::from(e))
     })?;
