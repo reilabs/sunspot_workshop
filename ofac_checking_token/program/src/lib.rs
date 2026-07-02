@@ -6,10 +6,13 @@ use solana_program::{
     msg,
     program::invoke_signed,
     program_error::ProgramError,
-    program_pack::Pack,
     pubkey::Pubkey,
 };
-use spl_token::instruction::mint_to;
+use spl_token_2022::{
+    extension::StateWithExtensions,
+    instruction::mint_to,
+    state::Account as TokenAccount,
+};
 
 // Custom condition error
 #[derive(Debug)]
@@ -64,12 +67,14 @@ pub fn process_instruction(
         return Err(MintingError::NotEligible.into());
     }
 
-    // Check destination token balance
-    let destination_data = spl_token::state::Account::unpack(&destination.try_borrow_data()?)?;
-    if destination_data.amount > 0 {
+    // Check destination token balance (Token-2022 account may carry extensions)
+    let destination_bytes = destination.try_borrow_data()?;
+    let destination_state = StateWithExtensions::<TokenAccount>::unpack(&destination_bytes)?;
+    if destination_state.base.amount > 0 {
         msg!("Destination account already holds tokens, minting denied");
         return Err(MintingError::NotEligible.into());
     }
+    drop(destination_bytes);
 
     // If eligible and balance is 0, mint tokens
     let amount_to_mint = 1u64;
