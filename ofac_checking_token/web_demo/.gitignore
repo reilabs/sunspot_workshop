@@ -1,0 +1,4 @@
+node_modules
+dist
+public/artifacts/sanction_checker.*
+public/artifacts/inputs.json

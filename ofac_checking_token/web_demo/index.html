@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>OFAC checking token — sunspot_js + Solana wallet demo</title>
+  <style>
+    body { font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; margin: 2rem; max-width: 72ch; }
+    h1 { font-size: 18px; }
+    h2 { font-size: 15px; margin-top: 1.5rem; border-bottom: 1px solid #ddd; padding-bottom: 0.2rem; }
+    label { display: block; margin-top: 0.5rem; }
+    input { width: 60ch; font: inherit; padding: 0.2rem; }
+    button { font: inherit; padding: 0.4rem 0.8rem; margin: 0.25rem 0.25rem 0.25rem 0; }
+    button:disabled { opacity: 0.5; }
+    #log { margin-top: 1rem; white-space: pre-wrap; }
+    .ok  { color: #0a0; }
+    .err { color: #b00; }
+    .dim { color: #888; }
+    .downloads, .wallets { margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+    .downloads a { padding: 0.4rem 0.8rem; border: 1px solid #ccc; text-decoration: none; color: inherit; }
+    .downloads a:hover, .link:hover { background: #f0f0f0; }
+    .link { padding: 0.2rem 0.4rem; border: 1px solid #ccc; text-decoration: none; color: inherit; }
+    #wallet-status { margin-top: 0.5rem; }
+    code.addr { background: #f4f4f4; padding: 0.1rem 0.3rem; border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <h1>OFAC checking token — prove + mint in-browser</h1>
+  <p>
+    Runs the <code>sanction_checker</code> Noir circuit via
+    <code>@reilabs/sunspot_js</code>, then hands the proof to a connected
+    Solana wallet which signs + sends the mint instruction to program
+    <code class="addr">6Yh5yNsCHmzAgHDqRQzrGZv5m1Vbmvvvp7TY822g5KcX</code> on devnet.
+  </p>
+
+  <h2>1. Connect a Solana wallet</h2>
+  <p class="dim">Detected wallets (via Wallet Standard). Install Phantom / Solflare / Backpack if none appear.</p>
+  <div class="wallets" id="wallet-list">
+    <span class="dim">scanning…</span>
+  </div>
+  <div id="wallet-status"></div>
+
+  <h2>2. Circuit inputs</h2>
+  <label>current_date (unix seconds — from Prover.toml by default)
+    <input id="current-date" />
+  </label>
+
+  <h2>3. Prove + mint</h2>
+  <button id="go">Prove and mint (1 token)</button>
+  <button id="prove-only">Prove only (offline / download)</button>
+
+  <div id="log"></div>
+  <div class="downloads" id="downloads"></div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
