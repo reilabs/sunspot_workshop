@@ -9,13 +9,13 @@ import {
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
 import {
-  TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
 } from "@solana/spl-token";
 import fs from "fs";
 
 // Replace these strings with your own Program ID and Mint
-const PROGRAM_ID = new PublicKey("11111111111111111111111111111111");
-const MINT = new PublicKey("11111111111111111111111111111111");
+const PROGRAM_ID = new PublicKey("6Yh5yNsCHmzAgHDqRQzrGZv5m1Vbmvvvp7TY822g5KcX");
+const MINT = new PublicKey("DayYyJgDX8TptmUi5Zh5cyU5Dht2icw5bdjbUmYki2Sa");
 
 // === CONNECTION & WALLET ===
 const connection = new Connection("https://api.devnet.solana.com", "confirmed");
@@ -68,7 +68,7 @@ const ix = new TransactionInstruction({
   programId: PROGRAM_ID, keys: [
     { pubkey: MINT, isSigner: false, isWritable: true },
     { pubkey: DESTINATION, isSigner: false, isWritable: true },
-    { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+    { pubkey: TOKEN_2022_PROGRAM_ID, isSigner: false, isWritable: false },
     { pubkey: mintAuthorityPda, isSigner: false, isWritable: false },
   ],
   data: instructionData,
